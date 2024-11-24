@@ -1,0 +1,21 @@
+{
+  "total_simulation_time": 14215.723369836807,
+  "average_collision_risk": 0.12911064292386842,
+  "max_collision_risk_observed": 0.971677062747405,
+  "final_completion_percentage": {
+    "drone_0": 99.79837667121897,
+    "drone_1": 99.90638055550876,
+    "drone_2": 99.95164350942424,
+    "drone_3": 99.76439532088175,
+    "drone_4": 99.8382402030784,
+    "drone_5": 99.95541368694875
+  },
+  "total_rerouting_events": {
+    "drone_0": 117,
+    "drone_1": 35,
+    "drone_2": 51,
+    "drone_3": 110,
+    "drone_4": 29,
+    "drone_5": 49
+  }
+}

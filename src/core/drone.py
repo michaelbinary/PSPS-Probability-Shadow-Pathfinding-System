@@ -1,46 +1,64 @@
 from dataclasses import dataclass
-from typing import Dict, List, Set
+from typing import List, Tuple
 import numpy as np
-from .intention import Intention
+
 
 @dataclass
 class DroneState:
+    """Represents the state of a single drone"""
     position: np.ndarray
     velocity: np.ndarray
     goal: np.ndarray
-    current_intention: Intention
-    received_intentions: Dict[str, Intention]
-    mesh_connections: Set[str]
-    communication_range: float
+    uncertainty: float
+    covariance: np.ndarray
+    shadow_points: List[Tuple[np.ndarray, float]]
     path_history: List[np.ndarray]
-    status: str
-    metrics: Dict[str, List[float]]
+    collision_risk: float
+    rerouting: bool
+    start_position: np.ndarray
+    rerouting_count: int
+    original_goal: np.ndarray
+    rerouting_steps: int
 
-    def update_position(self, new_position: np.ndarray, dt: float):
-        """Update drone position and record history"""
-        self.position = new_position
+    @classmethod
+    def initialize(cls, start: np.ndarray, goal: np.ndarray, initial_uncertainty: float = 0.1):
+        """Initialize a new drone state"""
+        initial_covariance = np.eye(3) * initial_uncertainty
+
+        return cls(
+            position=start.copy(),
+            velocity=np.zeros(3),
+            goal=goal.copy(),
+            uncertainty=initial_uncertainty,
+            covariance=initial_covariance,
+            shadow_points=[],
+            path_history=[start.copy()],
+            collision_risk=0.0,
+            rerouting=False,
+            start_position=start.copy(),
+            rerouting_count=0,
+            original_goal=goal.copy(),
+            rerouting_steps=0
+        )
+
+    def update_position(self, new_position: np.ndarray):
+        """Update drone position and path history"""
+        self.position = new_position.copy()
         self.path_history.append(new_position.copy())
-        if len(self.path_history) > 50:  # Keep last 50 positions
-            self.path_history.pop(0)
 
-    def update_velocity(self, new_velocity: np.ndarray):
-        """Update drone velocity"""
-        self.velocity = new_velocity
+    def start_rerouting(self, new_goal: np.ndarray):
+        """Initiate rerouting procedure"""
+        self.rerouting = True
+        self.rerouting_steps = 0
+        self.goal = new_goal.copy()
+        self.rerouting_count += 1
 
-    def update_status(self, new_status: str):
-        """Update drone status"""
-        self.status = new_status
+    def stop_rerouting(self):
+        """End rerouting and return to original goal"""
+        self.rerouting = False
+        self.rerouting_steps = 0
+        self.goal = self.original_goal.copy()
 
-    def receive_intention(self, drone_id: str, intention: Intention):
-        """Receive and store intention from another drone"""
-        self.received_intentions[drone_id] = intention
-
-    def update_mesh_connections(self, new_connections: Set[str]):
-        """Update mesh network connections"""
-        self.mesh_connections = new_connections
-
-    def record_metric(self, metric_name: str, value: float):
-        """Record a metric value"""
-        if metric_name not in self.metrics:
-            self.metrics[metric_name] = []
-        self.metrics[metric_name].append(value)
+    def update_shadow(self, shadow_points: List[Tuple[np.ndarray, float]]):
+        """Update probability shadow points"""
+        self.shadow_points = shadow_points

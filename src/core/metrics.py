@@ -1,44 +1,51 @@
 from dataclasses import dataclass
-from typing import Dict, List
+from typing import Dict
 from datetime import datetime
 
 
 @dataclass
 class SimulationMetrics:
+    """Store metrics for each simulation timestep"""
     timestamp: float
-    network_connectivity: float
-    active_conflicts: int
-    average_confidence: float
-    total_path_adjustments: int
-    mesh_density: float
-    average_path_length: float
-    emergency_route_activations: int
-    collision_risks: List[float]
-    priority_distribution: Dict[str, int]
+    average_collision_risk: float
+    max_collision_risk: float
+    total_distance_traveled: Dict[str, float]
+    average_velocity: Dict[str, float]
+    rerouting_events: Dict[str, int]
+    completion_percentage: Dict[str, float]
 
     @classmethod
-    def create_from_network(cls, network: 'IntentionBroadcastNetwork', time: float):
-        """Factory method to create metrics from current network state"""
-        active_conflicts = sum(1 for d in network.drones.values() if d.status == 'adjusting')
+    def create_from_state(cls, timestamp: float, drones: Dict) -> 'SimulationMetrics':
+        """Create metrics from current simulation state"""
+        collision_risks = [drone.collision_risk for drone in drones.values()]
 
-        confidences = [d.current_intention.confidence for d in network.drones.values()]
-        avg_confidence = sum(confidences) / len(confidences) if confidences else 0
+        total_distances = {}
+        average_velocities = {}
+        completion_percentages = {}
 
-        num_nodes = len(network.drones)
-        num_edges = len(network.mesh_network.edges())
-        mesh_density = (2 * num_edges) / (num_nodes * (num_nodes - 1)) if num_nodes > 1 else 0
+        for drone_id, drone in drones.items():
+            # Calculate total distance traveled
+            path = drone.path_history
+            total_distances[drone_id] = sum(
+                np.linalg.norm(path[i + 1] - path[i])
+                for i in range(len(path) - 1)
+            ) if len(path) > 1 else 0.0
 
-        # Calculate remaining metrics...
+            average_velocities[drone_id] = np.linalg.norm(drone.velocity)
+
+            # Calculate completion percentage
+            total_distance = np.linalg.norm(drone.goal - drone.start_position)
+            current_distance = np.linalg.norm(drone.goal - drone.position)
+            completion_percentages[drone_id] = min(
+                100 * (1 - current_distance / total_distance), 100
+            ) if total_distance > 0 else 100
 
         return cls(
-            timestamp=time,
-            network_connectivity=network.calculate_connectivity(),
-            active_conflicts=active_conflicts,
-            average_confidence=avg_confidence,
-            total_path_adjustments=sum(network.network_metrics['path_adjustments']),
-            mesh_density=mesh_density,
-            average_path_length=network.calculate_average_path_length(),
-            emergency_route_activations=sum(1 for d in network.drones.values() if d.status == 'emergency'),
-            collision_risks=[d.current_intention.path_risk for d in network.drones.values()],
-            priority_distribution=network.calculate_priority_distribution()
+            timestamp=timestamp,
+            average_collision_risk=np.mean(collision_risks),
+            max_collision_risk=np.max(collision_risks),
+            total_distance_traveled=total_distances,
+            average_velocity=average_velocities,
+            rerouting_events={drone_id: drone.rerouting_count for drone_id, drone in drones.items()},
+            completion_percentage=completion_percentages
         )

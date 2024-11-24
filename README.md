@@ -1,29 +1,30 @@
-# 🚁 Intention Broadcasting System (IBS)
+# 🚁 Probability Shadow Pathfinding System (PSPS)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 
-A simulation framework for autonomous drone networks using intention broadcasting and dynamic mesh networking. This project demonstrates advanced concepts in multi-agent coordination, conflict resolution, and emergency response systems.
+A simulation framework for autonomous drone navigation using probability shadow pathfinding. This project implements advanced uncertainty-aware path planning with real-time collision risk assessment and dynamic rerouting.
 
 ![Simulation Preview](simulation.gif)
 
 ## 🌟 Key Features
 
-### Intention Broadcasting
-- **Dynamic Path Planning**: Real-time path generation and adjustment
-- **Confidence-based Decision Making**: Path confidence calculation and conflict resolution
-- **Emergency Route Planning**: Automatic generation of emergency escape routes
-
-### Mesh Networking
-- **Dynamic Network Formation**: Adaptive mesh network connections
-- **Network Health Monitoring**: Real-time connectivity and density metrics
-- **Priority-based Communication**: Multi-level priority system for message handling
+### Probability Shadow Navigation
+- **Dynamic Risk Assessment**: Real-time collision probability calculation
+- **Uncertainty Propagation**: Growing uncertainty shadows for future positions
+- **Adaptive Rerouting**: Intelligent path adjustment based on risk assessment
 
 ### Advanced Analytics
-- **Real-time Metrics**: Comprehensive system performance monitoring
-- **Network Analysis**: Detailed mesh network statistics
-- **Conflict Detection**: Sophisticated collision risk assessment
-- **Visual Analytics**: Rich visualization of system dynamics
+- **Real-time Metrics**: Comprehensive tracking of system performance
+- **Collision Risk Analysis**: Detailed probability-based risk assessment
+- **Mission Progress Tracking**: Real-time completion monitoring
+- **Path Optimization**: Analysis of route efficiency and safety
+
+### Visualization
+- **3D Shadow Visualization**: Real-time display of probability shadows
+- **Risk Mapping**: Visual representation of collision risks
+- **Path History**: Track historical movements and decisions
+- **Analytics Dashboard**: Real-time performance metrics
 
 ## 🚀 Quick Start
 
@@ -31,7 +32,8 @@ A simulation framework for autonomous drone networks using intention broadcastin
 
 ```bash
 # Clone the repository
-cd intention-broadcast-system
+git clone https://github.com/yourusername/probability-shadow-pathfinding.git
+cd probability-shadow-pathfinding
 
 # Create a virtual environment
 python -m venv venv
@@ -44,90 +46,84 @@ pip install -e .
 ### Basic Usage
 
 ```python
-from ibs.network import IntentionBroadcastSimulation
+from psps.simulation import ProbabilityShadowSimulation
 
 # Create and run a simulation
-sim = IntentionBroadcastSimulation(space_size=(50, 50, 30))
+sim = ProbabilityShadowSimulation(space_size=(50, 50, 30))
 sim.run()
 ```
 
 ## 🎮 Advanced Usage
 
-### Custom Network Configuration
+### Custom Configuration
 
 ```python
-from ibs.network import IntentionBroadcastNetwork
+from psps.simulation import ProbabilityShadowGrid
 import numpy as np
 
-# Initialize the network
-network = IntentionBroadcastNetwork(space_size=(50, 50, 30))
+# Initialize the grid
+grid = ProbabilityShadowGrid(space_size=(50, 50, 30))
 
-# Configure network parameters
-network.broadcast_interval = 0.5
-network.mesh_range = 15.0
-network.collision_threshold = 5.0
+# Configure simulation parameters
+grid.prediction_steps = 20
+grid.uncertainty_growth_rate = 0.08
+grid.collision_threshold = 0.25
+grid.safe_distance = 4.0
+grid.time_horizon = 6.0
 
-# Add drones with priorities
-network.add_drone(
-    drone_id="emergency_1",
-    position=np.array([10, 10, 5]),
-    goal=np.array([40, 40, 25]),
-    priority_level="emergency"
+# Add drones with specific configurations
+grid.initialize_drone(
+    drone_id="drone_1",
+    start=np.array([10, 10, 5]),
+    goal=np.array([40, 40, 25])
 )
 ```
 
-### Priority Level Configuration
+### Analytics Configuration
 
 ```python
-# Define custom priority levels
-priority_config = {
-    'emergency': 5,
-    'medical': 4,
-    'express': 3,
-    'standard': 2,
-    'flexible': 1
-}
-
-network = IntentionBroadcastNetwork(
-    space_size=(50, 50, 30),
-    priority_levels=priority_config
-)
+# Configure analytics collection
+simulation.enable_analytics({
+    'collision_risk': True,
+    'path_efficiency': True,
+    'mission_progress': True,
+    'rerouting_events': True
+})
 ```
 
 ## 🔧 Technical Details
 
 ### Core Components
 
-1. **Intention Broadcasting**
-   - Dynamic waypoint generation
-   - Confidence calculation
-   - Path risk assessment
-   - Emergency route planning
+1. **Probability Shadow Generation**
+   - Multivariate normal distribution modeling
+   - Uncertainty growth prediction
+   - Dynamic shadow point generation
 
-2. **Mesh Networking**
-   - Dynamic connection management
-   - Network topology optimization
-   - Priority-based message routing
+2. **Collision Risk Assessment**
+   - Probabilistic collision detection
+   - Risk threshold management
+   - Real-time path validation
 
-3. **Conflict Resolution**
-   - Collision detection and avoidance
-   - Priority-based path adjustment
-   - Emergency response triggers
+3. **Path Planning**
+   - Risk-aware route planning
+   - Dynamic obstacle avoidance
+   - Efficient alternative path finding
 
 ### Performance Optimization
 
-- Efficient spatial queries using KD-trees
-- Vectorized path calculations
-- Optimized network updates
-- Streamlined conflict detection
+- Vectorized operations for shadow calculations
+- Efficient spatial queries
+- Optimized probability computations
+- Streamlined visualization rendering
 
 ## 📊 Applications
 
-- **Urban Air Mobility**: Manage dense drone traffic in urban environments
-- **Emergency Response**: Coordinate emergency vehicle routing
-- **Logistics Operations**: Optimize delivery fleet movements
-- **Search and Rescue**: Coordinate multi-agent search patterns
-- **Event Coverage**: Manage drone formations for event surveillance
+- **Urban Air Mobility**: Safe autonomous drone navigation
+- **Risk Assessment**: Probabilistic collision prediction
+- **Path Planning**: Uncertainty-aware route optimization
+- **Multi-Agent Systems**: Coordinated navigation with uncertainty
+- **Safety Analysis**: Risk assessment for autonomous systems
 
 ## 📄 License
 
@@ -135,9 +131,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-- Network algorithms inspired by modern mesh networking research
-- Visualization components built on Matplotlib and NetworkX
-- Advanced analytics powered by NumPy, Pandas, and SciPy
+- Probability theory concepts from advanced robotics research
+- Visualization components built on Matplotlib and NumPy
+- Statistical computations powered by SciPy
 - Special thanks to all contributors and the open-source community
 
 ---
